@@ -27,11 +27,16 @@ const getPessoaModel = (sequelize, Sequelize) => {
     }
   );
 
-  
+
   Pessoa.associate = (models) => {
     Pessoa.hasMany(models.Experiencia, { 
       foreignKey: "pessoaId", 
       as: "experiencias" 
+    });
+
+    Pessoa.hasMany(models.Formacao, { 
+      foreignKey: "pessoaId", 
+      as: "formacoes" 
     });
   };
 
