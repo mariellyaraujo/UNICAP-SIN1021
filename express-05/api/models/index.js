@@ -1,20 +1,34 @@
+require("dotenv").config();
 const Sequelize = require("sequelize");
-const sequelize = require("../config/database"); 
 
-const db = {};
+const getPessoaModel = require("./pessoas");
+const getExperienciaModel = require("./experiencias");
+const getFormacaoModel = require("./formacoes");
 
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: "postgres",
+  protocol: "postgres",
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
+  dialectModule: require("pg"),
+  logging: false,
+});
 
-db.Pessoa = require("./pessoas")(sequelize, Sequelize);
-db.Experiencia = require("./experiencias")(sequelize, Sequelize);
-db.Formacao = require("./formacoes")(sequelize, Sequelize);
+const models = {
 
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+  Pessoa: getPessoaModel(sequelize, Sequelize),
+  Experiencia: getExperienciaModel(sequelize, Sequelize),
+  Formacao: getFormacaoModel(sequelize, Sequelize),
+};
+
+Object.keys(models).forEach((key) => {
+  if ("associate" in models[key]) {
+    models[key].associate(models);
   }
 });
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-module.exports = db;
+module.exports = { sequelize, ...models };
