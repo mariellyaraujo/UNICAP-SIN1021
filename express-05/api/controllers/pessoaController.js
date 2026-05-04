@@ -28,12 +28,21 @@ module.exports = {
           { model: Formacao, as: "formacoes" }
         ]
       });
-
       if (!pessoa) return res.status(404).json({ mensagem: "Pessoa não encontrada" });
-
       return res.status(200).json(pessoa);
     } catch (error) {
       return res.status(500).json({ erro: error.message });
+    }
+  },
+
+  async atualizar(req, res) {
+    try {
+      const { id } = req.params;
+      await Pessoa.update(req.body, { where: { id } });
+      const atualizado = await Pessoa.findByPk(id);
+      return res.status(200).json(atualizado);
+    } catch (error) {
+      return res.status(400).json({ erro: error.message });
     }
   },
 
