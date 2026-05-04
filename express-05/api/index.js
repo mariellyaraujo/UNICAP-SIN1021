@@ -1,8 +1,11 @@
 const express = require("express");
 const db = require("./api/models"); 
+const routes = require("./api/routes"); 
 const app = express();
 
 app.use(express.json());
+
+app.use("/api", routes); 
 
 db.sequelize.sync({ alter: true }).then(() => {
   console.log("Banco de dados sincronizado e tabelas criadas!");
