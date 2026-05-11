@@ -31,11 +31,28 @@ module.exports = {
   },
 
   async excluir(req, res) {
-    try {
-      await Formacao.destroy({ where: { id: req.params.id } });
-      return res.status(204).send();
-    } catch (error) {
-      return res.status(500).json({ erro: error.message });
+  try {
+    const { id } = req.params;
+
+    const deletado = await Formacao.findByPk(id);
+
+    if (!deletado) {
+      return res.status(404).json({
+        erro: "Formação não encontrada"
+      });
     }
+
+    await deletado.destroy();
+
+    return res.status(200).json({
+      sucesso: true
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      erro: error.message
+    });
   }
+}
 };
